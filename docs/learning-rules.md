@@ -1,29 +1,34 @@
 # Learning Rules
 
-## Mastery
-
-The prototype uses a simple correct/attempt ratio as a starting point. This is intentionally replaceable.
-
 ## Recommendation
+1. No history → NEW
+2. Due review → REVIEW
+3. Recent errors with low mastery → HINT
+4. Mastery ≥ 90% → CHALLENGE
+5. Otherwise → PRACTICE
 
-- No history → NEW
-- Recent errors with low mastery → HINT
-- Mastery ≥ 90% → CHALLENGE
-- Otherwise → PRACTICE
+## Spaced review
+- correct streak 1 → 1 day
+- correct streak 2 → 2 days
+- correct streak 3 → 4 days
+- correct streak 4+ → 7 days
+- miss with low mastery → review now
+- miss with higher mastery → review tomorrow
+
+This is a lightweight starter model, not a validated assessment.
+
+## Daily Adventure
+1. due review
+2. recent error retry
+3. mastered-item challenge
+4. new discovery
 
 ## Hint progression
+1. another look
+2. one clue
+3. simpler guiding question
+4. small step
+5. explanation after guided attempts
 
-1. Encourage another look.
-2. Point to one clue.
-3. Ask a simpler guiding question.
-4. Break the task into a small step.
-5. Explain after guided attempts.
-
-## Future improvements
-
-- first-try accuracy;
-- recent-error weighting;
-- spaced repetition;
-- prerequisite skills;
-- confidence estimates;
-- age-appropriate content policies.
+## Child experience
+Keep language short, warm, and supportive. Do not shame, compare, pressure, or reveal answers too quickly.
