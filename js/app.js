@@ -52,6 +52,7 @@ function startQuestion() {
     choices: ["A", "B", "C"],
     answer: "A"
   });
+  current.recommendedAction = blipola.recommend(current.skill, current.item).action;
   question.textContent = current.question;
   choices.innerHTML = current.choices.map(choice =>
     `<button class="choice" data-answer="${choice}">${choice}</button>`
@@ -74,7 +75,7 @@ function answerQuestion(answer) {
 
   if (correct) {
     const result = blipola.complete(current, { correct: true, firstTry: attempts === 1, attempts });
-    const mission = missionForAction(blipola.recommend(current.skill, current.item).action);
+    const mission = missionForAction(current.recommendedAction);
     if (mission) completeMission(progress, mission);
     question.textContent = "Nice! Ready for another?";
     choices.innerHTML = '<button class="primary" id="nextBtn">Next Adventure</button>';
