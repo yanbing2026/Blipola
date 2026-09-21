@@ -44,16 +44,11 @@ export function getDueReviews(progress, now = new Date(), limit = 3) {
       }
     }
   }
-  return due
-    .sort((a, b) => a.mastery - b.mastery || Date.parse(a.nextReview) - Date.parse(b.nextReview))
-    .slice(0, limit);
+  return due.sort((a, b) => a.mastery - b.mastery || Date.parse(a.nextReview) - Date.parse(b.nextReview)).slice(0, limit);
 }
 
 export function getRecentErrors(progress, limit = 3) {
-  return (progress.attempts || [])
-    .filter(a => !a.correct)
-    .slice(-limit)
-    .reverse();
+  return (progress.attempts || []).filter(a => !a.correct).slice(-limit).reverse();
 }
 
 export function chooseLearningAction(progress, skill, item, now = new Date()) {
