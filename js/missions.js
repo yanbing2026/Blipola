@@ -8,5 +8,14 @@ export function getMissionSummary(progress) {
   const today = new Date().toISOString().slice(0, 10);
   const done = progress.missions?.[today] || {};
   const completed = DAILY_MISSIONS.filter(m => done[m.id]).length;
-  return { total: DAILY_MISSIONS.length, completed, allDone: completed === DAILY_MISSIONS.length };
+  return { total: DAILY_MISSIONS.length, completed, allDone: completed === DAILY_MISSIONS.length, missions: DAILY_MISSIONS.map(m => ({ ...m, done: !!done[m.id] })) };
+}
+
+export function completeMission(progress, id) {
+  progress.missions ||= {};
+  const today = new Date().toISOString().slice(0, 10);
+  progress.missions[today] ||= {};
+  if (progress.missions[today][id]) return false;
+  progress.missions[today][id] = true;
+  return true;
 }
