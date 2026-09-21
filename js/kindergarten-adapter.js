@@ -1,4 +1,5 @@
 import { createBlipola } from "./blipola.js";
+import { loadProgress } from "./progress.js";
 
 const LABELS = {
   letters: "Letters",
@@ -88,10 +89,40 @@ export function classroomActivity(outcome, question, selectedId) {
 }
 
 export function seedBlipolaProgressFromClassroom(blipolaProgress, classroomProgress = {}) {
+  const mastery = classroomProgress.mastery || {};
+  const due = classroomProgress.due || {};
+
+  for (const [categoryLevel, items] of Object.entries(mastery)) {
+    if (!items || typeof items !== "object") continue;
+    const separator = categoryLevel.indexOf("_");
+    const skill = separator > 0 ? categoryLevel.slice(0, separator) : categoryLevel;
+    const history = blipolaProgress.skills[skill] ||= {};
+
+    for (const [item, count] of Object.entries(items)) {
+      const n = Math.max(0, Number(count) || 0);
+      if (!n) continue;
+      const existing = history[String(item)] ||= {
+        attempts: 0,
+        correct: 0,
+        wrong: 0,
+        firstTry: 0,
+        lastSeen: null,
+        lastCorrect: null,
+        recentErrors: 0,
+        correctStreak: 0,
+        nextReview: null
+      };
+      existing.attempts = Math.max(existing.attempts || 0, n);
+      existing.correct = Math.max(existing.correct || 0, n);
+      existing.correctStreak = Math.max(existing.correctStreak || 0, n);
+      const dueAt = due[categoryLevel]?.[item];
+      if (dueAt) existing.nextReview = new Date(Number(dueAt)).toISOString();
+    }
+  }
+
   const activity = Array.isArray(classroomProgress.activityLog)
     ? classroomProgress.activityLog
     : [];
-
   for (const entry of activity) {
     const skill = entry.key || entry.skill;
     const item = entry.itemId ?? entry.item;
@@ -108,26 +139,26 @@ export function seedBlipolaProgressFromClassroom(blipolaProgress, classroomProgr
       correctStreak: 0,
       nextReview: null
     };
-
-    existing.attempts = Math.max(existing.attempts || 0, Number(entry.attempts) || 0);
-    if (entry.correct) existing.correct = Math.max(existing.correct || 0, 1);
-    else existing.wrong = Math.max(existing.wrong || 0, 1);
-    existing.firstTry = Math.max(existing.firstTry || 0, entry.firstTry ? 1 : 0);
-    existing.lastSeen = entry.at ? new Date(entry.at).toISOString() : existing.lastSeen;
+    existing.lastSeen = entry.at ? new Date(Number(entry.at)).toISOString() : existing.lastSeen;
+    if (!entry.correct) {
+      existing.wrong += 1;
+      existing.recentErrors = Math.min(5, (existing.recentErrors || 0) + 1);
+    }
   }
 
   return blipolaProgress;
 }
 
 export function createKindergartenIntegration({
-  progress,
+  progress = null,
   onEvent = () => {},
   onHostActivity = () => {},
   classroomProgress = null
 } = {}) {
+  const baseProgress = progress || loadProgress();
   const seeded = classroomProgress
-    ? seedBlipolaProgressFromClassroom(progress, classroomProgress)
-    : progress;
+    ? seedBlipolaProgressFromClassroom(baseProgress, classroomProgress)
+    : baseProgress;
 
   const blipola = createBlipola({ progress: seeded, onEvent });
 
