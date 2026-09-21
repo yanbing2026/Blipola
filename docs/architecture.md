@@ -1,34 +1,29 @@
 # Architecture
 
 ## Layers
+- **UI** — questions, missions, hints, and buddy states.
+- **Blipola API** — the stable product-facing integration surface.
+- **Learning Engine** — mastery, action selection, difficulty, review scheduling, and Daily Adventure.
+- **Progress** — attempts, first-try accuracy, recent errors, streak, rewards, and review dates.
+- **AI Provider (future)** — optional language generation only.
 
-### UI
-Presents Blipola, missions, hints, and learning states.
+## Product API
+- `recommend(skill, item)`
+- `startQuestion(context)`
+- `respond(context)`
+- `hint(context)`
+- `explain(context)`
+- `complete(context, outcome)`
+- `dailyAdventure()`
+- `speak(kind)`
 
-### Blipola API
-Small product-facing interface:
-- recommend(skill, item)
-- hint(context)
-- explain(context)
-- speak(kind)
+## Event API
+`onEvent(event)` receives:
+- `buddy-state`
+- `learning-complete`
+- `daily-adventure`
 
-### Learning Engine
-Owns learning decisions and difficulty:
-- mastery
-- action selection
-- difficulty
-- future review scheduling
-
-### Progress
-Stores attempts and per-item learning evidence.
-
-### AI Provider (future)
-Optional provider interface for richer language generation. It is not required for the offline core.
-
-## Integration
-
-A learning product should provide structured learning context to Blipola rather than embedding Blipola-specific logic throughout the product.
-
+## Integration flow
 ```
 Learning Product
       │
@@ -41,3 +36,5 @@ Learning Engine   AI Provider
  ▼
 Progress
 ```
+
+The Learning Engine remains authoritative. AI may generate language, but it cannot change scoring, mastery, progression, review timing, or safety decisions.
