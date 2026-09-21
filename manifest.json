@@ -1,0 +1,9 @@
+{
+  "name": "Blipola",
+  "short_name": "Blipola",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f8fc",
+  "theme_color": "#6d5dfc",
+  "description": "Blipola — a friendly offline-first AI learning buddy."
+}
