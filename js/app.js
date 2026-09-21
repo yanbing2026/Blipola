@@ -1,8 +1,14 @@
 import { loadProgress } from "./progress.js";
 import { createBlipola } from "./blipola.js";
 import { getMissionSummary, completeMission, missionForAction } from "./missions.js";
+import { registerSkills } from "./skills.js";
 
 const progress = loadProgress();
+
+registerSkills([
+  { id: "letters", title: "Letters", description: "Recognize letters and sounds." },
+  { id: "numbers", title: "Numbers", description: "Recognize and use numbers." }
+]);
 const speech = document.querySelector("#speech");
 const status = document.querySelector("#status");
 const buddy = document.querySelector("#buddy");
