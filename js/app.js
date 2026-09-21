@@ -1,6 +1,6 @@
-import { loadProgress } from "./progress.js";
+import { loadProgress, awardReward } from "./progress.js";
 import { createBlipola } from "./blipola.js";
-import { getMissionSummary } from "./missions.js";
+import { getMissionSummary, completeMission } from "./missions.js";
 
 const progress = loadProgress();
 const blipola = createBlipola({ progress });
@@ -8,25 +8,34 @@ const speech = document.querySelector("#speech");
 const status = document.querySelector("#status");
 const buddy = document.querySelector("#buddy");
 
-function show(kind) {
-  speech.textContent = blipola.speak(kind);
-  buddy.animate([{transform:"scale(1)"},{transform:"scale(1.08)"},{transform:"scale(1)"}], {duration:450});
+function animateBuddy() {
+  buddy.animate([{ transform: "scale(1) rotate(0deg)" }, { transform: "scale(1.08) rotate(-2deg)" }, { transform: "scale(1) rotate(0deg)" }], { duration: 500, easing: "ease-out" });
+}
+
+function show(kind, message = null) {
+  speech.textContent = message || blipola.speak(kind);
+  animateBuddy();
 }
 
 document.querySelector("#learnBtn").onclick = () => {
-  show("thinking");
-  status.textContent = "Blipola is choosing a gentle next step.";
+  const recommendation = blipola.recommend("letters", "A");
+  show(null, recommendation.message);
+  status.textContent = `Blipola • ${recommendation.action} • ${recommendation.difficulty} • ${recommendation.reason}`;
 };
 
 document.querySelector("#hintBtn").onclick = () => {
-  speech.textContent = blipola.hint({});
-  status.textContent = "Hint mode • Think first, then try.";
+  speech.textContent = blipola.hint({ wrongAttempts: 1 });
+  status.textContent = "Hint 1 • Think first, then try.";
+  animateBuddy();
 };
 
 document.querySelector("#questBtn").onclick = () => {
-  const m = getMissionSummary(progress);
-  speech.textContent = m.allDone ? blipola.speak("celebrate") : blipola.speak("quest");
-  status.textContent = `Daily Quest • ${m.completed}/${m.total} complete`;
+  const summary = getMissionSummary(progress);
+  if (!summary.allDone && completeMission(progress, summary.missions.find(m => !m.done)?.id || "learn")) awardReward(progress, { xp: 10 });
+  const next = getMissionSummary(progress);
+  speech.textContent = next.allDone ? blipola.speak("celebrate") : blipola.speak("quest");
+  status.textContent = `Daily Quest • ${next.completed}/${next.total} complete • ${progress.rewards.xp} XP`;
+  animateBuddy();
 };
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
