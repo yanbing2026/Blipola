@@ -8,19 +8,22 @@
   <title>Blipola — Learning Buddy</title>
   <style>
     :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202338;background:#f7f8fc}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh}
-    .app{max-width:920px;margin:auto;padding:28px 18px 48px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .brand{display:flex;align-items:center;gap:12px}.logo{width:52px;height:52px;border-radius:18px;background:#6d5dfc;display:grid;place-items:center;color:white;font-weight:900;font-size:25px}
-    h1{font-size:28px;margin:0}.sub{color:#70758a;margin:3px 0 0}
-    .hero{margin-top:28px;border-radius:28px;padding:28px;background:white;box-shadow:0 10px 35px #20233812;display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center}
-    .buddy{width:140px;height:140px;border-radius:46px;background:#dcd8ff;position:relative;display:grid;place-items:center;font-size:64px}
-    .buddy:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#6d5dfc;right:18px;bottom:18px}
-    .speech{font-size:22px;line-height:1.35;margin:0 0 18px}.actions{display:flex;flex-wrap:wrap;gap:10px}
-    button{border:0;border-radius:14px;padding:12px 17px;font-weight:750;cursor:pointer;background:#eeeef7;color:#292b42}
-    button.primary{background:#6d5dfc;color:white}.status{margin-top:18px;color:#666b80;font-size:14px}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.card{background:white;border-radius:20px;padding:20px;box-shadow:0 5px 20px #2023380b}.card h2{font-size:17px;margin:0 0 7px}.card p{margin:0;color:#70758a;font-size:14px}
-    @media(max-width:650px){.hero{grid-template-columns:1fr;text-align:center}.buddy{margin:auto}.actions{justify-content:center}.grid{grid-template-columns:1fr}}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh}.app{max-width:960px;margin:auto;padding:24px 18px 48px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px}
+    .logo{width:52px;height:52px;border-radius:18px;background:#6d5dfc;display:grid;place-items:center;color:white;font-weight:900;font-size:25px}
+    h1{font-size:28px;margin:0}.sub{color:#70758a;margin:3px 0 0}.hero{margin-top:22px;border-radius:28px;padding:24px;background:white;box-shadow:0 10px 35px #20233812;display:grid;grid-template-columns:140px 1fr;gap:22px;align-items:center}
+    .buddy{width:132px;height:132px;border-radius:44px;background:#dcd8ff;position:relative;display:grid;place-items:center;font-size:58px;transition:.2s}
+    .buddy:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#6d5dfc;right:16px;bottom:16px}
+    .buddy[data-state="thinking"]{transform:rotate(-2deg)}.buddy[data-state="hint"]{box-shadow:0 0 0 8px #eeeef7}.buddy[data-state="celebrate"]{box-shadow:0 0 0 10px #e8e4ff}
+    .speech{font-size:21px;line-height:1.35;margin:0 0 14px}.actions{display:flex;flex-wrap:wrap;gap:9px}
+    button{border:0;border-radius:14px;padding:11px 16px;font-weight:750;cursor:pointer;background:#eeeef7;color:#292b42}button:hover{filter:brightness(.98)}button.primary{background:#6d5dfc;color:white}
+    .status{margin-top:14px;color:#666b80;font-size:14px}.panel-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}
+    .card{background:white;border-radius:20px;padding:20px;box-shadow:0 5px 20px #2023380b}.card h2{font-size:18px;margin:0 0 12px}
+    .question{font-size:27px;font-weight:800;margin:6px 0 14px}.choices{display:flex;gap:10px;flex-wrap:wrap}.choice{min-width:70px;font-size:22px;background:#f2f1fa}
+    .adventure{padding:12px 14px;border-radius:14px;background:#f3f1ff;color:#5047a7;margin-bottom:14px}.quests{list-style:none;padding:0;margin:0;display:grid;gap:9px}
+    .quests li{display:grid;grid-template-columns:22px 1fr;column-gap:6px;align-items:center}.quests li strong{font-size:14px}.quests li small{grid-column:2;color:#70758a}.quests li.done strong{text-decoration:line-through}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}.grid p{margin:0;color:#70758a;font-size:14px}
+    @media(max-width:700px){.hero{grid-template-columns:1fr;text-align:center}.buddy{margin:auto}.actions,.choices{justify-content:center}.panel-grid,.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -28,6 +31,7 @@
     <header>
       <div class="brand"><div class="logo">B</div><div><h1>Blipola</h1><p class="sub">Your learning buddy</p></div></div>
     </header>
+
     <section class="hero" aria-live="polite">
       <div class="buddy" id="buddy" aria-label="Blipola">◉‿◉</div>
       <div>
@@ -35,15 +39,29 @@
         <div class="actions">
           <button class="primary" id="learnBtn">Let's Learn</button>
           <button id="hintBtn">Give Me a Hint</button>
-          <button id="questBtn">Daily Quest</button>
+          <button id="questBtn">Daily Adventure</button>
         </div>
         <div class="status" id="status">Offline-first mode • No account needed</div>
       </div>
     </section>
+
+    <section class="panel-grid">
+      <article class="card">
+        <h2>Today's Question</h2>
+        <div class="question" id="question">Press “Let's Learn” to begin.</div>
+        <div class="choices" id="choices"></div>
+      </article>
+      <article class="card">
+        <h2>Daily Quest</h2>
+        <div class="adventure" id="adventure">Discover • Let's discover something new.</div>
+        <ul class="quests" id="questList"></ul>
+      </article>
+    </section>
+
     <section class="grid">
       <article class="card"><h2>Think</h2><p>Blipola guides children toward answers instead of giving them away too quickly.</p></article>
-      <article class="card"><h2>Try</h2><p>Practice adapts to recent attempts, mistakes, and mastered skills.</p></article>
-      <article class="card"><h2>Celebrate</h2><p>Progress, effort, and completed learning quests are celebrated.</p></article>
+      <article class="card"><h2>Try</h2><p>Practice responds to attempts, mistakes, mastery, and review timing.</p></article>
+      <article class="card"><h2>Celebrate</h2><p>Effort and progress earn encouragement and small rewards.</p></article>
     </section>
   </main>
   <script type="module" src="js/app.js"></script>
