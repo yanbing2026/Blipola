@@ -47,6 +47,15 @@ function renderMissions() {
 function showAdventure() {
   const a = blipola.dailyAdventure();
   adventure.textContent = `${a.title} • ${a.reason}`;
+  return a;
+}
+
+function startAdventure() {
+  const a = showAdventure();
+  startQuestion();
+  speech.textContent = `${a.title}! Let's go.`;
+  status.textContent = `${a.skill} • ${a.item} • ${a.reason}`;
+  animateBuddy();
 }
 
 function startQuestion() {
@@ -110,12 +119,7 @@ document.querySelector("#hintBtn").onclick = () => {
   animateBuddy();
 };
 
-document.querySelector("#questBtn").onclick = () => {
-  showAdventure();
-  speech.textContent = blipola.speak("quest");
-  status.textContent = "Your Daily Adventure is ready.";
-  animateBuddy();
-};
+document.querySelector("#questBtn").onclick = startAdventure;
 
 renderMissions();
 showAdventure();
