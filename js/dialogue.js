@@ -9,6 +9,6 @@ const lines = {
 };
 export function say(kind){ return lines[kind] || lines.welcome; }
 export function responseFor({correct, attempts=0}) {
-  if(correct) return attempts===0 ? say("correct") : say("celebrate");
-  return attempts<=1 ? say("hint") : attempts===2 ? say("hint2") : say("hint3");
+  if(correct) return attempts <= 1 ? say("correct") : say("celebrate");
+  return attempts <= 1 ? say("hint") : attempts===2 ? say("hint2") : say("hint3");
 }
